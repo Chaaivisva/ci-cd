@@ -37,7 +37,7 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.KEYY }}
+          github_token: ${{ secrets.KEY1 }}
           publish_dir: ./html
 
   # Docker Job
