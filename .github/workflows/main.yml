@@ -1,0 +1,54 @@
+name: CI/CD for HTML Page
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # Build Job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Upload artifact to enable deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-file
+          path: |
+            ./index.html
+
+  # Deploy to GitHub Pages
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: html-file
+          path: ./html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.KEY1 }}
+          publish_dir: ./html
+
+  # Docker Job
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build -t my-html-image .
+
+      - name: Run Docker Container
+        run: |
+          docker run -d -p 8080:80 --name my-html-container my-html-image
